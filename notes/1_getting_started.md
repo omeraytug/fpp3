@@ -1,3 +1,10 @@
+```text
+Features / Predictors / Regressors (X)
+                |
+                v
+         Label / Target (y)
+```
+
 # Easy to forecast if
 
 - we have a good understanding of the factors that contribute to
