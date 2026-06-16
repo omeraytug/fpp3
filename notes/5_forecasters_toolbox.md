@@ -442,3 +442,441 @@ If these conditions hold, the residuals are approximately white noise and the mo
 **A good forecasting model leaves residuals that look like white noise.**
 
 Residuals should contain random errors only, not predictable patterns.
+
+
+# Distributional Forecasts and Prediction Intervals
+
+## Why Do We Need More Than Point Forecasts?
+
+A point forecast gives only a single predicted value.
+
+Example:
+
+$$
+\hat{y}_{T+h|T} = 759
+$$
+
+However, future values are uncertain.
+
+Instead of predicting one exact value, we should describe the range of possible future values.
+
+This range is represented by a **forecast distribution**.
+
+---
+
+# Forecast Distribution
+
+A forecast distribution describes the probability of all possible future values.
+
+- Point forecast = mean of the forecast distribution.
+- Most forecasting methods assume a normal distribution.
+
+Example:
+
+```
+           Forecast Distribution
+
+                 ^
+                 |
+            ____/ \____
+          _/           \_
+        _/               \_
+-------|--------759--------|-------
+```
+
+The center of the distribution is the point forecast.
+
+---
+
+# Prediction Intervals (PI)
+
+A prediction interval gives a range in which future observations are expected to fall with a specified probability.
+
+Example:
+
+Forecast:
+
+$$
+\hat{y}=759
+$$
+
+95% Prediction Interval:
+
+$$
+[737,\ 781]
+$$
+
+Interpretation:
+
+There is a 95% probability that the future value will fall inside this interval.
+
+---
+
+# Prediction Interval Formula
+
+For normally distributed forecasts:
+
+$$
+\hat{y}_{T+h|T} \pm c\hat{\sigma}_h
+$$
+
+where:
+
+- $\hat{y}_{T+h|T}$ = point forecast
+- $\hat{\sigma}_h$ = forecast standard deviation
+- $c$ = multiplier based on confidence level
+
+---
+
+# Common Multipliers
+
+| Coverage | Multiplier |
+|-----------|-----------|
+| 80% | 1.28 |
+| 90% | 1.64 |
+| 95% | 1.96 |
+| 99% | 2.58 |
+
+### Important
+
+For exams, remember:
+
+$$
+80\% \rightarrow 1.28
+$$
+
+$$
+95\% \rightarrow 1.96
+$$
+
+---
+
+# Why Prediction Intervals Matter
+
+Point forecasts alone do not show uncertainty.
+
+Example:
+
+Model A:
+
+$$
+100 \; [98,102]
+$$
+
+Model B:
+
+$$
+100 \; [50,150]
+$$
+
+Both have the same forecast.
+
+Model A is much more certain because its interval is narrower.
+
+---
+
+# One-Step Forecast Intervals
+
+For one-step forecasts ($h=1$), uncertainty is estimated using residuals.
+
+Residual standard deviation:
+
+$$
+\hat{\sigma}
+=
+\sqrt{
+\frac{
+\sum e_t^2
+}{
+T-K-M
+}
+}
+$$
+
+where:
+
+- $e_t$ = residuals
+- $T$ = number of observations
+- $K$ = number of estimated parameters
+- $M$ = missing residuals
+
+### Interpretation
+
+Large residuals
+→ larger uncertainty
+
+Small residuals
+→ smaller uncertainty
+
+---
+
+# Multi-Step Forecast Intervals
+
+A key property:
+
+As forecast horizon increases,
+
+$$
+h \uparrow
+$$
+
+uncertainty increases,
+
+$$
+\sigma_h \uparrow
+$$
+
+and prediction intervals become wider.
+
+Example:
+
+| Horizon | Prediction Interval |
+|----------|----------|
+| 1-step | [95,105] |
+| 5-step | [90,110] |
+| 10-step | [80,120] |
+
+The further into the future we forecast, the more uncertain we become.
+
+---
+
+# Forecast Standard Deviation for Benchmark Methods
+
+## Mean Method
+
+$$
+\hat{\sigma}_h
+=
+\hat{\sigma}
+\sqrt{1+\frac{1}{T}}
+$$
+
+---
+
+## Naive Method
+
+$$
+\hat{\sigma}_h
+=
+\hat{\sigma}
+\sqrt{h}
+$$
+
+### Important
+
+For the Naive method:
+
+- Forecast remains constant.
+- Uncertainty grows with $\sqrt{h}$.
+
+Example:
+
+$$
+\hat{\sigma}=10
+$$
+
+1-step:
+
+$$
+10\sqrt{1}=10
+$$
+
+4-step:
+
+$$
+10\sqrt{4}=20
+$$
+
+9-step:
+
+$$
+10\sqrt{9}=30
+$$
+
+---
+
+## Seasonal Naive Method
+
+$$
+\hat{\sigma}_h
+=
+\hat{\sigma}
+\sqrt{k+1}
+$$
+
+where
+
+$$
+k=\left\lfloor \frac{h-1}{m} \right\rfloor
+$$
+
+and $m$ is the seasonal period.
+
+---
+
+## Drift Method
+
+$$
+\hat{\sigma}_h
+=
+\hat{\sigma}
+\sqrt{
+h
+\left(
+1+\frac{h}{T-1}
+\right)
+}
+$$
+
+---
+
+# Bootstrapped Prediction Intervals
+
+Normal prediction intervals assume:
+
+$$
+e_t \sim N(0,\sigma^2)
+$$
+
+But residuals are not always normally distributed.
+
+An alternative is:
+
+## Bootstrapping
+
+Instead of assuming a normal distribution:
+
+1. Collect historical residuals.
+2. Randomly sample residuals.
+3. Generate possible future values.
+4. Repeat thousands of times.
+
+---
+
+# Naive Forecast with Bootstrap
+
+Naive model:
+
+$$
+y_t = y_{t-1}+e_t
+$$
+
+Future simulation:
+
+$$
+y^*_{T+1}
+=
+y_T + e^*_{T+1}
+$$
+
+where
+
+$$
+e^*_{T+1}
+$$
+
+is a randomly selected historical residual.
+
+Then:
+
+$$
+y^*_{T+2}
+=
+y^*_{T+1}
++
+e^*_{T+2}
+$$
+
+Repeat for the entire forecast horizon.
+
+---
+
+# Sample Paths
+
+Bootstrapping creates many possible futures.
+
+Path 1:
+
+```
+759 → 762 → 760 → 765
+```
+
+Path 2:
+
+```
+759 → 755 → 751 → 748
+```
+
+Path 3:
+
+```
+759 → 767 → 772 → 780
+```
+
+Each path is one possible realization of the future.
+
+---
+
+# Creating Bootstrap Prediction Intervals
+
+Generate many future paths:
+
+Example:
+
+5000 simulations
+
+For each horizon:
+
+1. Collect all simulated values.
+2. Sort them.
+3. Take percentiles.
+
+Example:
+
+95% interval:
+
+- Lower = 2.5th percentile
+- Upper = 97.5th percentile
+
+Result:
+
+$$
+95\% \text{ Prediction Interval}
+$$
+
+---
+
+# Advantages of Bootstrapping
+
+- No normality assumption.
+- Uses actual historical residuals.
+- Can capture skewness.
+- Can capture fat tails.
+- Often more realistic than normal intervals.
+
+---
+
+# Exam Summary
+
+### Must Know
+
+- Forecast distribution = uncertainty around forecasts.
+- Point forecast = mean of forecast distribution.
+- Prediction intervals provide a likely range for future values.
+- 80% multiplier = 1.28.
+- 95% multiplier = 1.96.
+- Prediction intervals widen as horizon increases.
+- For Naive:
+
+$$
+\hat{\sigma}_h
+=
+\hat{\sigma}\sqrt{h}
+$$
+
+- Bootstrapping samples historical residuals to simulate future values.
+- Bootstrap intervals do not require normally distributed residuals.
+
+### One-Line Summary
+
+A point forecast gives the most likely future value, while prediction intervals and forecast distributions quantify uncertainty; this uncertainty increases with forecast horizon and can be estimated using either normal-distribution formulas or bootstrap simulations.
