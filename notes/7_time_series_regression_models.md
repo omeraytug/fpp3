@@ -303,3 +303,310 @@ The predictor that gives the best forecasts is not always the predictor with the
 FPP3 recommends using AICc, AIC, or Cross-Validation for selecting predictors instead of relying on p-values.
 
 A p-value asks "Does this predictor have a statistically detectable effect?", while AICc and CV ask "Does this predictor help me forecast better?".
+
+
+
+# 7.7 Nonlinear Regression
+
+## Why Nonlinear Regression?
+
+Linear regression assumes:
+
+$$
+y = \beta_0 + \beta_1 x + \varepsilon
+$$
+
+Many real-world relationships are nonlinear, so we may need transformations or more flexible models.
+
+---
+
+## Log-Log Model
+
+$$
+\log(y) = \beta_0 + \beta_1 \log(x) + \varepsilon
+$$
+
+### Interpretation
+
+$$
+\beta_1
+$$
+
+is an elasticity.
+
+A 1% increase in \(x\) leads to approximately a \(\beta_1\)% increase in \(y\).
+
+---
+
+## Log-Linear Model
+
+$$
+\log(y) = \beta_0 + \beta_1 x + \varepsilon
+$$
+
+This produces an exponential trend.
+
+---
+
+## Linear-Log Model
+
+$$
+y = \beta_0 + \beta_1 \log(x) + \varepsilon
+$$
+
+This is useful when \(x\) has diminishing effects.
+
+---
+
+## Handling Zeros
+
+Since:
+
+$$
+\log(0)
+$$
+
+is undefined, use:
+
+$$
+\log(x+1)
+$$
+
+instead.
+
+This allows zero values to stay valid.
+
+---
+
+## General Nonlinear Regression
+
+Instead of writing:
+
+$$
+y = \beta_0 + \beta_1 x + \varepsilon
+$$
+
+we can write:
+
+$$
+y = f(x) + \varepsilon
+$$
+
+Here, \(f(x)\) is a nonlinear function.
+
+---
+
+# Piecewise Linear Regression
+
+A piecewise linear model allows the slope to change at specific points.
+
+These points are called **knots**.
+
+Define:
+
+$$
+x_1 = x
+$$
+
+$$
+x_2 = (x-c)^+
+$$
+
+where:
+
+$$
+(x-c)^+ =
+\begin{cases}
+0, & x < c \\
+x-c, & x \ge c
+\end{cases}
+$$
+
+The knot is located at \(c\).
+
+---
+
+## Example
+
+If the knot is:
+
+$$
+c = 100
+$$
+
+then:
+
+| \(x\) | \((x-100)^+\) |
+|---|---|
+| 50 | 0 |
+| 80 | 0 |
+| 100 | 0 |
+| 120 | 20 |
+| 150 | 50 |
+
+Before 100, the new variable is 0.
+
+After 100, the new variable starts increasing.
+
+This allows the regression line to bend after 100.
+
+---
+
+# Regression Splines
+
+For multiple knots:
+
+$$
+x_1 = x
+$$
+
+$$
+x_2 = (x-c_1)^+
+$$
+
+$$
+x_3 = (x-c_2)^+
+$$
+
+$$
+x_4 = (x-c_3)^+
+$$
+
+Each knot introduces another possible change in slope.
+
+---
+
+# Forecasting with Nonlinear Trends
+
+For time series, we often set:
+
+$$
+x = t
+$$
+
+where \(t\) means time.
+
+A polynomial trend can be written as:
+
+$$
+y = \beta_0 + \beta_1 t + \beta_2 t^2 + \varepsilon
+$$
+
+However, polynomial trends are usually not recommended for forecasting because they can create unrealistic future forecasts.
+
+---
+
+# Piecewise Trend Model
+
+Instead of using \(t^2\), we can use a piecewise linear trend.
+
+If the trend bends at time:
+
+$$
+\tau
+$$
+
+then define:
+
+$$
+x_{1,t} = t
+$$
+
+$$
+x_{2,t} = (t-\tau)^+
+$$
+
+where:
+
+$$
+(t-\tau)^+ =
+\begin{cases}
+0, & t < \tau \\
+t-\tau, & t \ge \tau
+\end{cases}
+$$
+
+---
+
+## Slope Interpretation
+
+If the coefficients are:
+
+$$
+\beta_1
+$$
+
+and
+
+$$
+\beta_2
+$$
+
+then before the knot:
+
+$$
+\text{Slope} = \beta_1
+$$
+
+After the knot:
+
+$$
+\text{Slope} = \beta_1 + \beta_2
+$$
+
+So the knot changes the slope of the trend.
+
+---
+
+# Boston Marathon Example
+
+The book uses Boston Marathon winning times.
+
+The series shows different periods:
+
+- Before 1950: volatile times and little improvement
+- 1950 to 1980: clear improvement
+- After 1980: improvement slows down
+
+So the model uses knots at:
+
+$$
+1950
+$$
+
+and
+
+$$
+1980
+$$
+
+The extra features are:
+
+$$
+(t-1950)^+
+$$
+
+$$
+(t-1980)^+
+$$
+
+These allow the trend to have different slopes in different periods.
+
+---
+
+# Key Exam Points
+
+- Nonlinear regression is useful when a straight line is not enough.
+- Log transformations can create nonlinear relationships.
+- Log-log model gives elasticity interpretation.
+- Use \(\log(x+1)\) when the variable has zeros.
+- A knot is a point where the slope can change.
+- Piecewise regression creates bends in the trend.
+- Regression splines use multiple knots.
+- Polynomial trends are risky for forecasting.
+- Piecewise trends are usually safer than high-order polynomial trends.
+- After a knot, the slope becomes:
+
+$$
+\beta_1 + \beta_2
+$$
