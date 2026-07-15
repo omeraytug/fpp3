@@ -10,6 +10,7 @@ dependencies = [
     "hierarchicalforecast>=1.5.1",
     "ipykernel>=7.2.0",
     "jupyter>=1.1.1",
+    "lightgbm>=4.6.0",
     "matplotlib>=3.10.9",
     "mlforecast>=1.0.2",
     "notebook>=7.5.6",
